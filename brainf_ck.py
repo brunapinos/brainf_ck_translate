@@ -18,11 +18,11 @@ def construct(ctx, source):
         if cmd == '+':
             data[ptr] = (data[ptr] + 1) % 256
             x = ptr
-            ctx.tokens.append('data[' + str(x) + '] += 1;\n')
+            #ctx.tokens.append('data[' + str(x) + '] += 1;\n')
         elif cmd == '-':
             data[ptr] = (data[ptr] - 1) % 256
             x = ptr
-                ctx.tokens.append('data[' + str(x) + '] -= 1;\n')
+            #ctx.tokens.append('data[' + str(x) + '] -= 1;\n')
         elif cmd == '>':
             ptr += 1
             if ptr >= len(data):
@@ -30,7 +30,7 @@ def construct(ctx, source):
         elif cmd == '<':
             ptr -= 1
         elif cmd == '.':
-            ctx.tokens.append('putchar(' + chr(data[ptr]) + ');\n')
+            ctx.tokens.append('putchar(' + str(data[ptr]) + ');\n')
         elif cmd == ',':
             data[ptr] = ord(getche())
             ctx.tokens.append('data[' + str(x) +'] = getchar();\n')
