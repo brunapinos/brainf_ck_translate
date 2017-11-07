@@ -19,23 +19,30 @@ def n(code_p, source):
         if cmd == '+':
             data[ptr] = (data[ptr] + 1) % 256
             x = ptr
-            code_p.tokens.append('data[' + str(x) + '] += 1;\n')
+            code_p.tokens.append('    ' * code_p.indent + 'data[' + str(x) + '] += 1;\n')
         elif cmd == '-':
             data[ptr] = (data[ptr] - 1) % 256
             x = ptr
-            code_p.tokens.append('data[' + str(x) + '] -= 1;\n')
+            code_p.tokens.append('    ' * code_p.indent + 'data[' + str(x) + '] -= 1;\n')
         elif cmd == '>':
             ptr += 1
+            code_p.tokens.append('    ' * code_p.indent + 'ptr++;\n')
             if ptr >= len(data):
                 data.append(0)
         elif cmd == '<':
             ptr -= 1
+            code_p.tokens.append('    ' * code_p.indent + 'ptr--;\n')
+        elif cmd == '.':
+            code_p.tokens.append('    ' * code_p.indent + 'putchar(' + str(data[ptr]) + ');\n')
+        elif cmd == ',':
+            x = ord(getche())
+            code_p.tokens.append('    ' * code_p.indent + 'data[' + str(x) +'] = getchar();\n')
         elif cmd == '[':
-            code_p.tokens.append('while(data[ptr]) {\n')
+            code_p.tokens.append('    ' * code_p.indent + 'while(data[ptr]) {\n')
             code_p.indent += 1
         elif cmd == ']':
             code_p.indent -= 1
-            code_p.tokens.append('}\n')
+            code_p.tokens.append('    ' * code_p.indent + '}\n')
 
         code_ptr += 1
 
@@ -58,11 +65,11 @@ def construct(ctx, source):
         if cmd == '+':
             data[ptr] = (data[ptr] + 1) % 256
             x = ptr
-            #ctx.tokens.append('data[' + str(x) + '] += 1;\n')
+            ctx.tokens.append('    ' * ctx.indent + 'data[' + str(x) + '] += 1;\n')
         elif cmd == '-':
             data[ptr] = (data[ptr] - 1) % 256
             x = ptr
-            #ctx.tokens.append('data[' + str(x) + '] -= 1;\n')
+            ctx.tokens.append('    ' * ctx.indent + 'data[' + str(x) + '] -= 1;\n')
         elif cmd == '>':
             ptr += 1
             if ptr >= len(data):
@@ -70,10 +77,10 @@ def construct(ctx, source):
         elif cmd == '<':
             ptr -= 1
         elif cmd == '.':
-            ctx.tokens.append('putchar(' + str(data[ptr]) + ');\n')
+            ctx.tokens.append('    ' * ctx.indent + 'putchar(' + str(data[ptr]) + ');\n')
         elif cmd == ',':
-            data[ptr] = ord(getche())
-            ctx.tokens.append('data[' + str(x) +'] = getchar();\n')
+            x = ord(getche())
+            ctx.tokens.append('    ' * ctx.indent + 'data[' + str(x) +'] = getchar();\n')
         elif cmd == '[':
 
             if enter == 0:
@@ -99,6 +106,9 @@ def construct(ctx, source):
 
                 ctx.tokens.append(code_pilha)
                 pilha = []
+
+                code_p.tokens = []
+
                 enter = 1
 
             if data[ptr] == 0:
@@ -128,7 +138,7 @@ def construct(ctx, source):
 @click.option('-o', nargs=1)
 def build(o, filename):
 
-    x = '%s' % o
+    output = '%s' % o
 
     enter_arq = open(filename, 'r')
 
@@ -140,7 +150,7 @@ def build(o, filename):
 
     source = construct(ctx, ''.join(code.tokens))
 
-    exit_arq = open(x, 'w')
+    exit_arq = open(output, 'w')
     exit_arq.write(source)
     exit_arq.close()
 
