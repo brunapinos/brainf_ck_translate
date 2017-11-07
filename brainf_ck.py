@@ -36,7 +36,7 @@ def n(code_p, source):
             code_p.tokens.append('    ' * code_p.indent + 'putchar(' + str(data[ptr]) + ');\n')
         elif cmd == ',':
             x = ord(getche())
-            code_p.tokens.append('    ' * code_p.indent + 'data[' + str(x) +'] = getchar();\n')
+            code_p.tokens.append('    ' * code_p.indent + 'scanf("%u",&data[ptr]);\n')
         elif cmd == '[':
             code_p.tokens.append('    ' * code_p.indent + 'while(data[ptr]) {\n')
             code_p.indent += 1
@@ -58,6 +58,15 @@ def construct(ctx, source):
     op_b = 0
     pilha = []
     enter = 0
+    ctx.indent = 0
+    ctx.tokens.append('#include "stdio.h"\n')
+    ctx.tokens.append('#include "stdlib.h"\n')
+    ctx.tokens.append('int main() {\n')
+
+    ctx.indent = 1
+
+    ctx.tokens.append('    ' * ctx.indent + 'unsigned char data[100000];\n')
+    ctx.tokens.append('    ' * ctx.indent + 'int ptr = 0;\n')
 
     while code_ptr < len(source):
         cmd = source[code_ptr]
@@ -72,15 +81,17 @@ def construct(ctx, source):
             ctx.tokens.append('    ' * ctx.indent + 'data[' + str(x) + '] -= 1;\n')
         elif cmd == '>':
             ptr += 1
+            ctx.tokens.append('    ' * ctx.indent + 'ptr++;\n')
             if ptr >= len(data):
                 data.append(0)
         elif cmd == '<':
+            ctx.tokens.append('    ' * ctx.indent + 'ptr--;\n')
             ptr -= 1
         elif cmd == '.':
-            ctx.tokens.append('    ' * ctx.indent + 'putchar(' + str(data[ptr]) + ');\n')
+            ctx.tokens.append('    ' * ctx.indent + 'putchar(data[ptr]);\n')
         elif cmd == ',':
-            x = ord(getche())
-            ctx.tokens.append('    ' * ctx.indent + 'data[' + str(x) +'] = getchar();\n')
+            x = input()
+            ctx.tokens.append('    ' * ctx.indent + 'scanf("%u",&data[ptr]);\n')
         elif cmd == '[':
 
             if enter == 0:
@@ -130,6 +141,8 @@ def construct(ctx, source):
 
         code_ptr += 1
 
+    ctx.indent = 0
+    ctx.tokens.append('\n''    return 0;\n}')
     return ''.join(ctx.tokens)
 
 
