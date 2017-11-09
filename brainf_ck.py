@@ -10,10 +10,8 @@ def construct(final_code, source_code):
     data = [0]
     ptr = 0
     counter = 0
-    breakpoints = []
     TAB = 9 # Tab in Ascii table
 
-    enter = 0
     final_code.indent = 0
     final_code.tokens.append('#include <stdio.h>\n')
     final_code.tokens.append('#include <stdlib.h>\n\n')
@@ -23,7 +21,7 @@ def construct(final_code, source_code):
 
     final_code.tokens.append(chr(TAB) * final_code.indent + \
         'unsigned char data[100000];\n')
-    final_code.tokens.append(chr(TAB) * final_code.indent + 'int ptr = 0;\n')
+    final_code.tokens.append(chr(TAB) * final_code.indent + 'unsigned int ptr = 0;\n')
 
     while counter < len(source_code):
         character = source_code[counter]
@@ -32,26 +30,26 @@ def construct(final_code, source_code):
             data[ptr] = (data[ptr] + 1) % 256
             x = ptr
             final_code.tokens.append(chr(TAB) * final_code.indent + \
-                'data[' + str(x) + '] += 1;\n')
+                'data[ptr]++;\n')
         elif character == '-':
             data[ptr] = (data[ptr] - 1) % 256
             x = ptr
             final_code.tokens.append(chr(TAB) * final_code.indent + \
-                'data[' + str(x) + '] -= 1;\n')
+                'data[ptr]--;\n')
         elif character == '>':
             ptr += 1
             final_code.tokens.append(chr(TAB) * final_code.indent + 'ptr++;\n')
-            if ptr >= len(data):
+            if ptr == len(data):
                 data.append(0)
         elif character == '<':
-            final_code.tokens.append(chr(TAB) * final_code.indent + 'ptr--;\n')
             ptr -= 1
+            final_code.tokens.append(chr(TAB) * final_code.indent + 'ptr--;\n')
         elif character == '.':
             final_code.tokens.append(chr(TAB) * final_code.indent + \
                 'putchar(data[ptr]);\n')
         elif character == ',':
             final_code.tokens.append(chr(TAB) * final_code.indent + \
-                'scanf("%hhu",&data[ptr]);\n')
+                'data[ptr] = getchar();\n')
         elif character == '[':
             final_code.tokens.append(chr(TAB) * final_code.indent + \
                 'while(data[ptr]) {\n')
@@ -59,13 +57,12 @@ def construct(final_code, source_code):
         elif character == ']':
             final_code.indent -= 1
             final_code.tokens.append(chr(TAB) * final_code.indent + '}\n')
-        else:
-            enter = 0
 
         counter += 1
 
     final_code.indent = 0
     final_code.tokens.append('\n''    return 0;\n}')
+
     return ''.join(final_code.tokens)
 
 
