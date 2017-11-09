@@ -26,7 +26,7 @@ Dentro do diretório raiz, execute o seguinte comando:
 
 	python3 brainf_ck.py arquivo.bf -o saida.c
 
-Caso queria executar utilizando os exemplos, utilize o seguinte
+Caso queira executar utilizando os exemplos, utilize o seguinte
 comando:
 
 	python3 brainf_ck.py exemplos/nome_do_exemplo.bf -o saida.c
